@@ -8,7 +8,10 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flaskr.db import db
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flaskr.models import User, db
+
 
 def create_app(test_config=None):
     # create and configure the app 
@@ -27,7 +30,20 @@ def create_app(test_config=None):
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
         SECRET_KEY='dev'
     )
+    # Here we initalize db with app, this make is more abstract and give us a better flexibility in package
     db.init_app(app)
+    # We add Flask Migrate for easyer work on database
+    migrate = Migrate(app,db)
+
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    # This associate user cookie with user model id
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
+
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -47,6 +63,8 @@ def create_app(test_config=None):
     def hello():
         return "Hello, World!"
 
+
+    # Blueprints section
     from flaskr.auth import auth
     app.register_blueprint(auth)
 

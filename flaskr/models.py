@@ -1,11 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from flaskr.db import db
+from flask_login import UserMixin
+
+db = SQLAlchemy()
 
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    author_id    = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     title = db.Column(db.String(80), nullable=False)
     body = db.Column(db.Text, nullable=False)
@@ -16,11 +18,11 @@ class Post(db.Model):
         self.title = title
         self.body = body
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
 
     def __init__(self, username, password):
         self.username = username
