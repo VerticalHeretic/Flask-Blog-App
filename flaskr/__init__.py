@@ -7,17 +7,43 @@ that the flaskr directory should be treated as a package
 import os
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flaskr.models import User, db
+
 
 def create_app(test_config=None):
-    """
-    creat_app function -> it is a application factory
-    """
     # create and configure the app 
     app = Flask(__name__, instance_relative_config=True)
+
+    ENV = 'dev'
+
+    if ENV == 'dev':
+        app.debug = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:nimda@localhost/blog'
+    else:
+        app.debug = False
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://vamlkhujptmgtc:219869fd4af80477550a1d47cb1fbefa1bc62eb3a922c2c927761ce63a582226@ec2-54-163-47-62.compute-1.amazonaws.com:5432/d7u95b7c4klkag'
+
     app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite')
+        SQLALCHEMY_TRACK_MODIFICATIONS = False,
+        SECRET_KEY='dev'
     )
+    # Here we initalize db with app, this make is more abstract and give us a better flexibility in package
+    db.init_app(app)
+    # We add Flask Migrate for easyer work on database
+    migrate = Migrate(app,db)
+
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    # This associate user cookie with user model id
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
+
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -37,14 +63,13 @@ def create_app(test_config=None):
     def hello():
         return "Hello, World!"
 
-    from . import db
-    db.init_app(app)
 
-    from . import auth 
-    app.register_blueprint(auth.bp)
+    # Blueprints section
+    from flaskr.auth import auth
+    app.register_blueprint(auth)
 
-    from . import blog
-    app.register_blueprint(blog.bp)
+    from flaskr.blog import blog
+    app.register_blueprint(blog)
     app.add_url_rule("/", endpoint='index')
 
     return app
