@@ -1,13 +1,5 @@
 {% extends 'base.html' %}
 
-<head>
-    <script>
-        function myFunction(x) {
-        x.classList.toggle("fas fa-heart");
-        }
-    </script>
-</head>
-
 {% block header %}
 <h1>{% block title %}Posts{% endblock %}</h1>
     {% if g.user %}
