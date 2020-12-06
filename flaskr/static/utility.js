@@ -1,9 +1,10 @@
-function like(x) {
-    if(x.style.color != "red"){
-        x.style.color = "red";
-    }
-    else{
-        x.style.color = "black";
-    }
-  }
-
+ $(function() {
+          $('a#test').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/like',
+                function(data) {
+              //do nothing
+            });
+            return false;
+          });
+        });

@@ -6,7 +6,7 @@ that the flaskr directory should be treated as a package
 
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -71,5 +71,17 @@ def create_app(test_config=None):
     from flaskr.blog import blog
     app.register_blueprint(blog)
     app.add_url_rule("/", endpoint='index')
+
+    #rendering the HTML page which has the button
+    @app.route('/json')
+    def json():
+        return render_template('json.html')
+
+    #background process happening without any refreshing
+    @app.route('/background_process_test')
+    def background_process_test():
+        print ("Hello")
+        return ("nothing")
+
 
     return app

@@ -4,7 +4,7 @@ from flask import (
 
 from werkzeug.exceptions import abort
 from flask_login import login_required, current_user
-from flaskr.models import Post,db
+from flaskr.models import Post, db
 
 blog = Blueprint('blog', __name__)
 
@@ -73,4 +73,13 @@ def update(id):
 def delete(id):
     Post.query.filter_by(id=id).delete()
     db.sesssion.commit()
+    return redirect(url_for('blog.index'))
+
+@login_required
+@blog.route("/<int:id>/like")
+def like(id):
+    post = get_post(id)
+
+    post.likes += 1
+    db.session.commit()
     return redirect(url_for('blog.index'))
