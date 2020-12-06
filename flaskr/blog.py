@@ -75,11 +75,15 @@ def delete(id):
     db.sesssion.commit()
     return redirect(url_for('blog.index'))
 
-@login_required
-@blog.route("/<int:id>/like")
-def like(id):
-    post = get_post(id)
 
-    post.likes += 1
-    db.session.commit()
-    return redirect(url_for('blog.index'))
+@blog.route("/like/<int:post_id>/<action>")
+@login_required
+def like(post_id, action):
+    post = get_post(post_id)
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    return redirect(request.referrer)
