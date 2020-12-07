@@ -6,12 +6,14 @@ that the flaskr directory should be treated as a package
 
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flaskr.models import User, db
+from flask_wtf import CSRFProtect
 
+csrf = CSRFProtect()
 
 def create_app(test_config=None):
     # create and configure the app 
@@ -30,6 +32,10 @@ def create_app(test_config=None):
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
         SECRET_KEY='dev'
     )
+
+    # Here we enable CSRF protection for our app
+    csrf.init_app(app)
+
     # Here we initalize db with app, this make is more abstract and give us a better flexibility in package
     db.init_app(app)
     # We add Flask Migrate for easyer work on database
@@ -83,5 +89,11 @@ def create_app(test_config=None):
         print ("Hello")
         return ("nothing")
 
+
+    @app.before_request 
+    def csrf_protect(): 
+        if request.method == "POST": 
+            token = session.pop('_csrf_token',None) 
+            if not token or token != request.form.get('_csrf_token'): abort(403)
 
     return app

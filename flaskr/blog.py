@@ -5,6 +5,7 @@ from flask import (
 from werkzeug.exceptions import abort
 from flask_login import login_required, current_user
 from flaskr.models import Post, db
+from flaskr import csrf
 
 blog = Blueprint('blog', __name__)
 
