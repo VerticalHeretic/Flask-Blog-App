@@ -4,7 +4,7 @@ from flask import (
 
 from werkzeug.exceptions import abort
 from flask_login import login_required, current_user
-from flaskr.models import Post, db
+from flaskr.models import Post, db, PostComment
 from flaskr import csrf
 
 blog = Blueprint('blog', __name__)
@@ -77,10 +77,10 @@ def delete(id):
     return redirect(url_for('blog.index'))
 
 
-@blog.route("/like/<int:post_id>/<action>")
+@blog.route("/<int:id>/<action>")
 @login_required
-def like(post_id, action):
-    post = get_post(post_id)
+def like(id, action):
+    post = get_post(id)
     if action == 'like':
         current_user.like_post(post)
         db.session.commit()
@@ -88,3 +88,30 @@ def like(post_id, action):
         current_user.unlike_post(post)
         db.session.commit()
     return redirect(request.referrer)
+
+@blog.route("/<int:id>/comments")
+def showComments(id):
+    post = get_post(id)
+    comments = post.comments
+    return render_template('blog/comments.html', comments = comments, post = post)
+
+@blog.route("/addComment", methods=('POST',))
+def addComment():
+    if request.method == 'POST':
+        post_id = int(request.form['post_id'])
+        print(post_id)
+        body = request.form['body']
+        
+        error = None
+
+        if body == '':
+            error = 'Body is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            comment = PostComment(current_user.id, post_id, body)
+            print(current_user.id)
+            db.session.add(comment)
+            db.session.commit()
+            return redirect(request.referrer)

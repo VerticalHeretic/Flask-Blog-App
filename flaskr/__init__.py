@@ -78,22 +78,4 @@ def create_app(test_config=None):
     app.register_blueprint(blog)
     app.add_url_rule("/", endpoint='index')
 
-    #rendering the HTML page which has the button
-    @app.route('/json')
-    def json():
-        return render_template('json.html')
-
-    #background process happening without any refreshing
-    @app.route('/background_process_test')
-    def background_process_test():
-        print ("Hello")
-        return ("nothing")
-
-
-    @app.before_request 
-    def csrf_protect(): 
-        if request.method == "POST": 
-            token = session.pop('_csrf_token',None) 
-            if not token or token != request.form.get('_csrf_token'): abort(403)
-
     return app

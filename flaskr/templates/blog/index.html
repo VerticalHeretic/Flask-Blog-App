@@ -26,16 +26,16 @@
                 {% if current_user.has_liked_post(post) %}
                 <form method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <a href="{{ url_for('blog.like', post_id=post.id, action='unlike') }}"">Unlike</a>
+                    <a href="{{ url_for('blog.like', id=post.id, action='unlike') }}"">Unlike</a>
                 </form>
                 {% else %}
                 <form method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <a href="{{ url_for('blog.like', post_id=post.id, action='like') }}">Like</a>
+                    <a href="{{ url_for('blog.like', id=post.id, action='like') }}">Like</a>
                 </form>
                 {% endif %} 
             {% endif %}
-            {{ post.likes.count() }} likes
+            {{ post.likes|length }} likes {{ post.comments|length }} <a class='action' href="{{ url_for('blog.showComments', id=post['id']) }}">comments</a> 
         </article>
         {% if not loop.last %}
             <hr>
