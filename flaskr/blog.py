@@ -4,7 +4,7 @@ from flask import (
 
 from werkzeug.exceptions import abort
 from flask_login import login_required, current_user
-from flaskr.models import Post, db, PostComment
+from flaskr.models import Post, db, PostComment, User
 from flaskr import csrf
 
 blog = Blueprint('blog', __name__)
@@ -12,7 +12,7 @@ blog = Blueprint('blog', __name__)
 @blog.route('/')
 def index():
     posts = Post.query.order_by(Post.created).all()
-    return render_template('blog/index.html', posts=posts)
+    return render_template('blog/index.html', posts=posts, getPostUser=getPostUser)
 
 @blog.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -115,3 +115,6 @@ def addComment():
             db.session.add(comment)
             db.session.commit()
             return redirect(request.referrer)
+
+def getPostUser(id):
+    return User.query.get(id).username

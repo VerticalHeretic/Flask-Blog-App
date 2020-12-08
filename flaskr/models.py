@@ -19,6 +19,8 @@ class PostComment(db.Model):
 
     def __init__(self, user_id,post_id, body):
         self.body = body
+        self.user_id = user_id
+        self.post_id = post_id
 
 class Post(db.Model):
     __tablename__ = 'post'
