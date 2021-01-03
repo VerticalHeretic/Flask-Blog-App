@@ -41,9 +41,6 @@ def get_post(id, check_author=True):
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    # if check_author and post.author_id != current_user.id:
-    #     abort(403)
-
     return post
 
 

@@ -2,18 +2,18 @@
 
 {% block header %}
     <br>
-    <h1 class="custom-centered" >{% block title%}New Post{% endblock %}</h1>
+    <h1 class="custom-centered text-light" >{% block title%}New Post{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <form  class="custom-centered" method="POST">
+    <form class="custom-centered" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="mb-3">
-        <label class="form-label" for="title">Title</label>
+        <label class="form-label text-light" for="title">Title</label>
         <input class="form-control" name="title" id='title' value="{{ request.form['title'] }}" required>
         </div>
         <div class="mb-3">
-        <label class="form-label" for="body">Body</label>
+        <label class="form-label text-light" for="body">Body</label>
         <textarea class="form-control" name="body" id='body'>{{ request.form['body'] }}</textarea>
         </div>
         <input class="btn btn-primary" type="submit" value="Save">
