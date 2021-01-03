@@ -41,8 +41,8 @@ def get_post(id, check_author=True):
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    if check_author and post.author_id != current_user.id:
-        abort(403)
+    # if check_author and post.author_id != current_user.id:
+    #     abort(403)
 
     return post
 
@@ -73,7 +73,7 @@ def update(id):
 @login_required
 def delete(id):
     Post.query.filter_by(id=id).delete()
-    db.sesssion.commit()
+    db.session.commit()
     return redirect(url_for('blog.index'))
 
 
@@ -89,7 +89,7 @@ def like(id, action):
         db.session.commit()
     return redirect(request.referrer)
 
-@blog.route("/<int:id>/comments")
+@blog.route("/<int:id>/comments", methods=('GET', 'POST'))
 def showComments(id):
     post = get_post(id)
     comments = post.comments
